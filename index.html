@@ -27,6 +27,8 @@
     <div class="game-setup">
       <form id="setup" onsubmit="setupComplete();">
         <div class="form-group">
+          <label for="setup-card-numbers">Card numbers</label>
+          <input class="form-control card-number-input" type="number" value="1"></input>
           <label for="setup-card-content">Card content</label>
           <textarea class="form-control" id="setup-card-content" rows="5"></textarea>
           <small class="form-text text-muted">One card per line. Supports basic HTML.</small>
@@ -39,8 +41,10 @@
     </div>
     <div id="deck" class="deck d-none">
       <h2>Draw a card</h2>
-      <div class="active-card">
-        <p id="card-text" class="active-card-text"></p>
+      <div class="active-cards">
+        <div class="active-card">
+          <p class="active-card-text"></p>
+        </div>
       </div>
       <p>
         <button class="btn btn-lg btn-success" onclick="drawCard();">Draw</button>
@@ -56,6 +60,8 @@
       "This is a default card.",
       "This is another default card.",
     ];
+
+    const cardElement = document.querySelector(".active-card").cloneNode(true);
 
     function setupToggleHide() {
       let form = document.getElementById('setup');
@@ -103,13 +109,23 @@
 
     // GAME
     function drawCard() {
-      if (Deck.length < 1) {
-        refillCards();
+
+      let nCards = parseInt(document.querySelector(".card-number-input").value);
+      let cardsElements = [];
+
+      for (let i=0; i<nCards; i++){
+        if (Deck.length < 1) {
+          refillCards();
+        }
+
+        let card = Deck.pop();
+        let newCardElement = cardElement.cloneNode(true);
+        newCardElement.querySelector(".active-card-text").innerText = card;
+        console.log(card);
+        cardsElements.push(newCardElement);
       }
 
-      let card = Deck.pop();
-      document.getElementById('card-text').innerHTML = card;
-      console.log(card);
+      document.querySelector(".active-cards").replaceChildren(...cardsElements);
     }
 
     refillCards();
